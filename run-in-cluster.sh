@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 NAMESPACE="${1:-"default"}"
 IMAGE_TAG="${2:-"latest"}"

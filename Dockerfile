@@ -45,6 +45,4 @@ RUN apt-get update && \
     \
     && apt-get autoremove -y && apt-get clean
 
-ADD profile  /etc/profile
-
 CMD ["/bin/bash","-l"]
