@@ -2,6 +2,11 @@ FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
+    apt-get -y install --fix-missing --no-install-recommends apt-utils gnupg && \
+    echo deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main >> /etc/apt/sources.list.d/pgdg.list && \
+    wget https://www.postgresql.org/media/keys/ACCC4CF8.asc --no-check-certificate && \
+    apt-key add ACCC4CF8.asc && \
+    apt-get update && \
     apt-get -y install --fix-missing --no-install-recommends apt-utils \
     apache2-utils \
     bash \
@@ -25,7 +30,7 @@ RUN apt-get update && \
     iputils-ping \
     ipvsadm \
     jq \
-    jq \
+    less \
     libaio1 \
     mtr \
     netcat-openbsd \
@@ -33,7 +38,7 @@ RUN apt-get update && \
     ngrep \
     nmap \
     openssl \
-    postgresql-client \
+    postgresql-client-13 \
     scapy \
     socat \
     strace \
