@@ -2,7 +2,7 @@ FROM ubuntu:20.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
-    apt-get -y install --fix-missing --no-install-recommends apt-utils gnupg && \
+    apt-get -y install --fix-missing --no-install-recommends apt-utils gnupg wget && \
     echo deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main >> /etc/apt/sources.list.d/pgdg.list && \
     wget https://www.postgresql.org/media/keys/ACCC4CF8.asc --no-check-certificate && \
     apt-key add ACCC4CF8.asc && \
