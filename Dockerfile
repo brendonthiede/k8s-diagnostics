@@ -69,4 +69,4 @@ RUN useradd -m -s /bin/bash -u 10000 -U -G sudo -p $(openssl passwd -1 pass) dia
     echo "diagnostics ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER diagnostics
-CMD ["/bin/bash","-l"]
+CMD ["tail","-f","/dev/null"]
