@@ -2,10 +2,8 @@ name: Helm Lint
 
 on:
   push:
-    paths-ignore:
-    - '**.md'
-    - 'Dockerfile'
-    - 'run-diagnostics-in-cluster.sh'
+    paths:
+    - "/charts/**"
   pull_request:
     branches: ["main"]
 
