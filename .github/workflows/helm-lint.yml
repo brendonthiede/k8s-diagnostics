@@ -1,0 +1,29 @@
+name: Helm lint
+
+on:
+  push:
+    paths-ignore:
+    - '**.md'
+    - 'Dockerfile'
+    - 'run-diagnostics-in-cluster.sh'
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Install Helm
+      uses: azure/setup-helm@v1
+      with:
+        version: v3.10.1
+
+    - name: Build Helm chart
+      run: |
+        helm lint
+        helm package .
