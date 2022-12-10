@@ -2,11 +2,11 @@
 apiVersion: vpcresources.k8s.aws/v1beta1
 kind: SecurityGroupPolicy
 metadata:
-  name: {{ include "rerouter.fullname" $ }}-pod-security-group-policy
+  name: {{ include "k8s-diagnostics.fullname" $ }}-pod-security-group-policy
 spec:
   podSelector: 
     matchLabels:
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/instance: {{ include "k8s-diagnostics.release" $ }}
   securityGroups:
     groupIds:
       {{- toYaml . | nindent 8 }}
