@@ -30,7 +30,6 @@ jobs:
         helm package .
 
     - name: Run chart-releaser
-      if: on.release
       uses: helm/chart-releaser-action@v1.4.1
       env:
         CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
