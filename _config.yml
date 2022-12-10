@@ -2,4 +2,4 @@ title: k8s-diagnostics
 description: >- 
   Simple tool for diagnosing Kubernetes issues.
 markdown: kramdown
-theme: midnight
+theme: Midnight
