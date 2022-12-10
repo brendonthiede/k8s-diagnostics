@@ -25,6 +25,7 @@ jobs:
 
     - name: Build Helm chart
       run: |
+        cd charts/k8s-diagnostics
         helm lint
         helm package .
 
