@@ -1,0 +1,15 @@
+apiVersion: v1
+entries:
+  k8s-diagnostics:
+  - apiVersion: v1
+    appVersion: 1.0.3
+    created: "2022-12-10T03:12:15.422Z"
+    description: Deploys a diagnostics pod into a cluster to help troubleshoot issues
+    digest: cfa18cc2e33d3c41717a755423e74ade86bb2777b3c8ada5f58d410b0113ec4f
+    maintainers:
+    - email: brendon.thiede@gmail.com
+      name: brendonthiede
+    name: k8s-diagnostics
+    urls:
+    - https://github.com/brendonthiede/prometheus-remote/releases/download/k8s-diagnostics-1.0.3/k8s-diagnostics-1.0.3.tgz
+    version: 1.0.3
