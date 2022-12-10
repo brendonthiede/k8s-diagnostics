@@ -1,8 +1,8 @@
 name: Helm Publish
 on:
-  release:
-    types:
-    - "published"
+  push:
+    branches:
+      - main
 
 jobs:
   release:
@@ -27,7 +27,6 @@ jobs:
       run: |
         cd charts/k8s-diagnostics
         helm lint
-        helm package .
 
     - name: Run chart-releaser
       uses: helm/chart-releaser-action@v1.4.1
