@@ -1,2 +1,0 @@
-Connect to the diagnostics pod by running the following command:
-kubectl exec -n {{ .Release.Namespace }} -it $(kubectl get po -l app.kubernetes.io/instance={{ .Release.Name }} -n {{ .Release.Namespace }} -o name) -- /bin/bash
