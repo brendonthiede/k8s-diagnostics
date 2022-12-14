@@ -2,6 +2,8 @@
 
 Container for troubleshooting a Kubernetes cluster
 
+For latest documentation, see [the GitHub repository](https://github.com/brendonthiede/k8s-diagnostics).
+
 ## Running as a pod
 
 To deploy the container as a pod in the default namespace, run the following command:
