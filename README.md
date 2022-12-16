@@ -18,7 +18,17 @@ To deploy as a Helm chart in the default namespace, run the following command:
 helm upgrade --install k8s-diagnostics https://github.com/brendonthiede/k8s-diagnostics/releases/download/k8s-diagnostics-1.0.5/k8s-diagnostics-1.0.5.tgz
 ```
 
-Once the pod is up and running you can exec into it. The Helm deployment should give you a command that you can copy and paste to do so.
+Or to deploy to EKS, leveraging VPC Security Groups:
+
+```bash
+helm upgrade --install k8s-diagnostics https://github.com/brendonthiede/k8s-diagnostics/releases/download/k8s-diagnostics-1.0.5/k8s-diagnostics-1.0.5.tgz --set "podSecurityGroupIds={sg-000aaabbbcccddeff,sg-111aaabbbcccddeff}"
+```
+
+Once the pod is up and running you can exec into it. The Helm deployment should give you a command that you can copy and paste to do so, but for the default namespace, it could look something like this:
+
+```bash
+kubectl exec -it $(kubectl get po -l app.kubernetes.io/instance=k8s-diagnostics -o name) -- /bin/bash
+```
 
 Also keep in mind that this deployment will not clean up after itself, so once you are done you will need to run `helm uninstall`. For a deployment in the default namespace you can run:
 
