@@ -46,7 +46,6 @@ RUN apt-get update && \
     tcptraceroute \
     util-linux \
     vim \
-    wget \
     \
     && apt-get autoremove -y && apt-get clean
 
