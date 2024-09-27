@@ -67,6 +67,7 @@ RUN apt-get update && \
 RUN ACCEPT_EULA=Y apt-get -y install --fix-missing --no-install-recommends \
     mssql-tools18 \
     unixodbc-dev
+ENV PATH="$PATH:/opt/mssql-tools18/bin"
 
 CMD ["/bin/bash","-l"]
 
@@ -75,4 +76,5 @@ RUN useradd -m -s /bin/bash -u 10000 -U -G sudo -p $(openssl passwd -1 pass) dia
     echo "diagnostics ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER diagnostics
+WORKDIR /home/diagnostics
 CMD ["tail","-f","/dev/null"]

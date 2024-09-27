@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: "thiedebr/k8s-diagnostics"
-  pullPolicy: IfNotPresent
+  pullPolicy: "Always"
   tag: "latest"
 
 imagePullSecrets: []
