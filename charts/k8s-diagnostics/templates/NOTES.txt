@@ -1,2 +1,10 @@
+==============================================================================
 Connect to the diagnostics pod by running the following command:
+
 kubectl exec -n {{ .Release.Namespace }} -it $(kubectl get po -l app.kubernetes.io/instance={{ .Release.Name }} -n {{ .Release.Namespace }} -o name) -- /bin/bash
+
+And then when you are ready to delete the deployment, run the following command:
+
+helm delete {{ .Release.Name }} --namespace {{ .Release.Namespace }}
+
+==============================================================================
