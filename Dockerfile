@@ -55,6 +55,7 @@ RUN apt-get update && \
     scapy \
     socat \
     strace \
+    sudo \
     tcpdump \
     tcptraceroute \
     unzip \
@@ -64,4 +65,8 @@ RUN apt-get update && \
     \
     && apt-get autoremove -y
 
+RUN useradd -m -s /bin/bash -u 1000 -U -G sudo -p $(openssl passwd -1 pass) diagnostics && \
+    echo "diagnostics ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+USER diagnostics
 CMD ["/bin/bash","-l"]
