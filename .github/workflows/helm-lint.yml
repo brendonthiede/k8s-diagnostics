@@ -1,4 +1,4 @@
-name: Helm lint
+name: Helm Lint
 
 on:
   push:
@@ -25,5 +25,6 @@ jobs:
 
     - name: Build Helm chart
       run: |
+        cd charts/k8s-diagnostics
         helm lint
         helm package .
