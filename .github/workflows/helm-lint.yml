@@ -3,7 +3,7 @@ name: Helm Lint
 on:
   push:
     paths:
-    - "/charts/**"
+      - "/charts/**"
   pull_request:
     branches: ["main"]
 
@@ -11,18 +11,18 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Install Helm
-      uses: azure/setup-helm@v1
-      with:
-        version: v3.10.1
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-    - name: Build Helm chart
-      run: |
-        cd charts/k8s-diagnostics
-        helm lint
-        helm package .
+      - name: Lint Helm chart
+        run: |
+          cd charts/k8s-diagnostics
+          helm lint
+          helm package .

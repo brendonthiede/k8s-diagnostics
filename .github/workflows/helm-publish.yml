@@ -1,40 +1,35 @@
-name: Helm Publish
+name: Release Charts
 
 on:
   push:
-    branches: ["main"]
-    # Publish semver tags as releases.
-    tags: ["k8s-diagnostics-*.*.*"]
-    paths:
-      - '/charts/**'
-  pull_request:
-    branches: ["main"]
+    branches:
+      - main
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Configure Git
-      run: |
-        git config user.name "$GITHUB_ACTOR"
-        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-    - name: Install Helm
-      uses: azure/setup-helm@v1
-      with:
-        version: v3.10.1
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-    - name: Build Helm chart
-      run: |
-        cd charts/k8s-diagnostics
-        helm lint
+      - name: Lint Helm chart
+        run: |
+          cd charts/k8s-diagnostics
+          helm lint
 
-    - name: Run chart-releaser
-      uses: helm/chart-releaser-action@v1.4.1
-      env:
-        CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
