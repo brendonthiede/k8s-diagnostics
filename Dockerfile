@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS base
+FROM ubuntu:22.04 AS root
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
@@ -13,13 +13,15 @@ RUN apt-get update && \
     gnupg2 \
     gpg \
     lsb-release \
-    software-properties-common && \
-    update-ca-certificates && \
-    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg && \
+    software-properties-common
+RUN update-ca-certificates
+RUN curl -sSL "https://www.postgresql.org/media/keys/ACCC4CF8.asc" | gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg && \
     echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" >/etc/apt/sources.list.d/pgdg.list && \
-    curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/redis-archive-keyring.gpg && \
+    curl -sSL "https://packages.redis.io/gpg" | gpg --dearmor -o /etc/apt/trusted.gpg.d/redis-archive-keyring.gpg && \
     echo "deb https://packages.redis.io/deb $(lsb_release -cs) main" >/etc/apt/sources.list.d/redis.list && \
-    apt-get update && \
+    curl -sSL "https://packages.microsoft.com/keys/microsoft.asc" >/etc/apt/trusted.gpg.d/microsoft.asc && \
+    curl -sSL "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list" >/etc/apt/sources.list.d/mssql-release.list
+RUN apt-get update && \
     apt-get -y install --fix-missing --no-install-recommends \
     apache2-utils \
     bash \
@@ -61,10 +63,14 @@ RUN apt-get update && \
     unzip \
     util-linux \
     vim \
-    wget \
-    \
-    && apt-get autoremove -y
+    wget
+RUN ACCEPT_EULA=Y apt-get -y install --fix-missing --no-install-recommends \
+    mssql-tools18 \
+    unixodbc-dev
 
+CMD ["/bin/bash","-l"]
+
+FROM root AS nonroot
 RUN useradd -m -s /bin/bash -u 10000 -U -G sudo -p $(openssl passwd -1 pass) diagnostics && \
     echo "diagnostics ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
