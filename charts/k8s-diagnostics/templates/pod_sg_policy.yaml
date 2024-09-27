@@ -1,0 +1,13 @@
+{{- with .Values.podSecurityGroupIds }}
+apiVersion: vpcresources.k8s.aws/v1beta1
+kind: SecurityGroupPolicy
+metadata:
+  name: {{ include "k8s-diagnostics.fullname" $ }}-pod-security-group-policy
+spec:
+  podSelector: 
+    matchLabels:
+      app.kubernetes.io/instance: {{ include "k8s-diagnostics.release" $ }}
+  securityGroups:
+    groupIds:
+      {{- toYaml . | nindent 8 }}
+{{- end }}
