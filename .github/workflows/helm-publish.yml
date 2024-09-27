@@ -1,10 +1,14 @@
 name: Helm Publish
+
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
+    # Publish semver tags as releases.
+    tags: ["k8s-diagnostics-*.*.*"]
     paths:
-      - "/charts/**"
+      - '/charts/**'
+  pull_request:
+    branches: ["main"]
 
 jobs:
   release:
@@ -29,6 +33,7 @@ jobs:
       run: |
         cd charts/k8s-diagnostics
         helm lint
+        helm package .
 
     - name: Run chart-releaser
       uses: helm/chart-releaser-action@v1.4.1
