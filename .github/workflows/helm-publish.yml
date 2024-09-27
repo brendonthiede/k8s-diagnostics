@@ -1,48 +1,35 @@
-name: Helm
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
+name: Helm Publish
 on:
-  push:
-    branches: ["main"]
-    # Publish semver tags as releases.
-    tags: ["v*.*.*"]
-    paths-ignore:
-      - '**.md'
-      - 'Dockerfile'
-      - 'run-diagnostics-in-cluster.sh'
-  pull_request:
-    branches: ["main"]
+  release:
+    types:
+    - "published"
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+    - name: Configure Git
+      run: |
+        git config user.name "$GITHUB_ACTOR"
+        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Install Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: v3.10.1
+    - name: Install Helm
+      uses: azure/setup-helm@v1
+      with:
+        version: v3.10.1
 
-      - name: Build Helm chart
-        run: |
-          helm lint
-          helm package .
+    - name: Build Helm chart
+      run: |
+        helm lint
+        helm package .
 
-      - name: Run chart-releaser
-        if: on.release
-        uses: helm/chart-releaser-action@v1.4.1
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    - name: Run chart-releaser
+      if: on.release
+      uses: helm/chart-releaser-action@v1.4.1
+      env:
+        CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
