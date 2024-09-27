@@ -11,7 +11,7 @@ fi
 
 SECURITY_GROUPS="$(kubectl get securitygrouppolicies.vpcresources.k8s.aws -n "${NAMESPACE_NAME}" -o jsonpath='{.items[*].spec.securityGroups.groupIds[*]}' | tr ' ' '\n' | sort -u | paste -sd "," -)"
 
-HELM_CHART_RELEASE="k8s-diagnostics-1.1.1"
+HELM_CHART_RELEASE="k8s-diagnostics-1.1.2"
 HELM_CHART="https://github.com/brendonthiede/k8s-diagnostics/releases/download/${HELM_CHART_RELEASE}/${HELM_CHART_RELEASE}.tgz"
 
 helm upgrade --install -n "${NAMESPACE_NAME}" k8s-diagnostics "${HELM_CHART}" --set "podSecurityGroupIds={${SECURITY_GROUPS}}"

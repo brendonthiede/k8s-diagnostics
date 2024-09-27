@@ -15,13 +15,13 @@ kubectl run k8s-diagnostics --rm --restart=Never -i --tty --image "thiedebr/k8s-
 To deploy as a Helm chart in the default namespace, run the following command:
 
 ```bash
-helm upgrade --install k8s-diagnostics https://github.com/brendonthiede/k8s-diagnostics/releases/download/k8s-diagnostics-1.1.1/k8s-diagnostics-1.1.1.tgz
+helm upgrade --install k8s-diagnostics https://github.com/brendonthiede/k8s-diagnostics/releases/download/k8s-diagnostics-1.1.2/k8s-diagnostics-1.1.2.tgz
 ```
 
 Or to deploy to EKS, leveraging VPC Security Groups:
 
 ```bash
-helm upgrade --install k8s-diagnostics https://github.com/brendonthiede/k8s-diagnostics/releases/download/k8s-diagnostics-1.1.1/k8s-diagnostics-1.1.1.tgz --set "podSecurityGroupIds={sg-000aaabbbcccddeff,sg-111aaabbbcccddeff}"
+helm upgrade --install k8s-diagnostics https://github.com/brendonthiede/k8s-diagnostics/releases/download/k8s-diagnostics-1.1.2/k8s-diagnostics-1.1.2.tgz --set "podSecurityGroupIds={sg-000aaabbbcccddeff,sg-111aaabbbcccddeff}"
 ```
 
 Once the pod is up and running you can exec into it. The Helm deployment should give you a command that you can copy and paste to do so, but for the default namespace, it could look something like this:
