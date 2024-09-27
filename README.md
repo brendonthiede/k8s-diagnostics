@@ -35,3 +35,13 @@ Also keep in mind that this deployment will not clean up after itself, so once y
 ```bash
 helm uninstall k8s-diagnostics
 ```
+
+## GitHub Actions
+
+### Helm Chart Release
+
+To release a new version of the Helm chart, simply update the version in the `Chart.yaml` file and push the changes to the `main` branch. GitHub Actions will automatically build and release the new version of the Helm chart.
+
+### Container Image Release
+
+To update the container image in Docker Hub, simply push a new tag to the `main` branch in the form `v.#.#.#`. GitHub Actions will automatically build and release the new version of the container image with the tag provided and `latest`. Any push to main will also trigger a build and release of the `main` tag.
