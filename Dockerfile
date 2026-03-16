@@ -65,6 +65,11 @@ RUN ACCEPT_EULA=Y apt-get -y install --fix-missing --no-install-recommends \
     unixodbc-dev
 ENV PATH="$PATH:/opt/mssql-tools18/bin"
 
+COPY --chmod=755 scripts/ /usr/local/bin/
+RUN for script in /usr/local/bin/*; do \
+      "$script" --completion >/etc/bash_completion.d/"$(basename "$script")" 2>/dev/null || true; \
+    done
+
 CMD ["/bin/bash","-l"]
 
 FROM root AS nonroot

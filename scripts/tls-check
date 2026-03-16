@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SHOW_DATES=false
+SHOW_SAN=false
+SHOW_SUBJECT=false
+PORT=443
+URL=""
+
+usage() {
+  cat <<EOF
+Usage: tls-check [OPTIONS] <url>
+
+Connects to a host and displays TLS certificate details. The protocol and
+path are stripped from the URL; only the hostname and port are used.
+
+Options:
+  -d, --dates       Show certificate validity dates (Not Before / Not After)
+  -s, --san         Show Subject Alternative Names
+  -u, --subject     Show certificate subject
+  -a, --all         Show all fields (default when no field options are given)
+  -p, --port PORT   Override port (default: 443, or port embedded in URL)
+  -h, --help        Show this help
+      --completion  Print bash completion script and exit
+
+Examples:
+  tls-check https://example.com
+  tls-check --dates --san https://example.com/some/path
+  tls-check -a https://example.com:8443/api
+  tls-check -s example.com -p 8443
+EOF
+}
+
+completion() {
+  cat <<'COMPLETION'
+_tls_check() {
+  local cur prev opts
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  opts="-d --dates -s --san -u --subject -a --all -p --port -h --help"
+
+  case "$prev" in
+    -p|--port)
+      # Expect a port number; no meaningful completions
+      return 0
+      ;;
+  esac
+
+  if [[ "$cur" == -* ]]; then
+    COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+    return 0
+  fi
+}
+complete -F _tls_check tls-check
+COMPLETION
+}
+
+die() { echo "Error: $*" >&2; exit 1; }
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -d|--dates)      SHOW_DATES=true;   shift ;;
+    -s|--san)        SHOW_SAN=true;     shift ;;
+    -u|--subject)    SHOW_SUBJECT=true; shift ;;
+    -a|--all)        SHOW_DATES=true; SHOW_SAN=true; SHOW_SUBJECT=true; shift ;;
+    -p|--port)       PORT="${2:?--port requires an argument}"; shift 2 ;;
+    -h|--help)       usage; exit 0 ;;
+    --completion)    completion; exit 0 ;;
+    -*)              die "Unknown option: $1" ;;
+    *)               URL="$1"; shift ;;
+  esac
+done
+
+[[ -z "$URL" ]] && { usage >&2; exit 1; }
+
+# Default to all fields when none are selected
+if ! $SHOW_DATES && ! $SHOW_SAN && ! $SHOW_SUBJECT; then
+  SHOW_DATES=true
+  SHOW_SAN=true
+  SHOW_SUBJECT=true
+fi
+
+# Strip protocol (e.g. https://)
+host_port="${URL#*://}"
+# Strip path, query, and fragment
+host_port="${host_port%%/*}"
+host_port="${host_port%%\?*}"
+host_port="${host_port%%#*}"
+
+# Split host and port if a port is embedded in the URL
+if [[ "$host_port" =~ ^(.*):([0-9]+)$ ]]; then
+  HOST="${BASH_REMATCH[1]}"
+  PORT="${BASH_REMATCH[2]}"
+else
+  HOST="$host_port"
+fi
+
+[[ -z "$HOST" ]] && die "Could not parse hostname from: $URL"
+
+echo "Host: ${HOST}:${PORT}"
+echo ""
+
+# Fetch PEM certificate from the server
+CERT=$(echo | openssl s_client -connect "${HOST}:${PORT}" -servername "${HOST}" 2>/dev/null \
+  | sed -n '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p')
+
+[[ -z "$CERT" ]] && die "Could not retrieve a certificate from ${HOST}:${PORT}"
+
+if $SHOW_SUBJECT; then
+  echo "=== Subject ==="
+  echo "$CERT" | openssl x509 -noout -subject
+  echo ""
+fi
+
+if $SHOW_DATES; then
+  echo "=== Validity ==="
+  echo "$CERT" | openssl x509 -noout -dates
+  echo ""
+fi
+
+if $SHOW_SAN; then
+  echo "=== Subject Alternative Names ==="
+  echo "$CERT" | openssl x509 -noout -ext subjectAltName 2>/dev/null || echo "(none found)"
+  echo ""
+fi

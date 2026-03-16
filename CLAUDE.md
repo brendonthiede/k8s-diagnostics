@@ -44,7 +44,7 @@ helm upgrade --install k8s-diagnostics charts/k8s-diagnostics --namespace <names
 
 The `Dockerfile` has two stages:
 
-- **`root`**: Ubuntu 22.04 base installing all diagnostic tools (tcpdump, nmap, psql, redis-cli, sqlcmd, scapy, etc.). Adds `/opt/mssql-tools18/bin` to `PATH`. The apt cache (`/var/lib/apt/lists`) is intentionally retained so additional packages can be installed at runtime with `apt-get install`.
+- **`root`**: Ubuntu 22.04 base installing all diagnostic tools (tcpdump, nmap, psql, redis-cli, sqlcmd, scapy, etc.). Adds `/opt/mssql-tools18/bin` to `PATH`. Copies `scripts/` into `/usr/local/bin/` with execute permissions. The apt cache (`/var/lib/apt/lists`) is intentionally retained so additional packages can be installed at runtime with `apt-get install`.
 - **`nonroot`**: Builds from `root`, creates a `diagnostics` user (UID 10000) with passwordless sudo, and sets the default command to `tail -f /dev/null` to keep the container alive.
 
 The final image is the `nonroot` stage.
@@ -64,6 +64,15 @@ Two GitHub Actions workflows:
 
 - **`docker-publish.yml`**: Builds and pushes multi-platform images to Docker Hub (`thiedebr/k8s-diagnostics`) on pushes to `main` or semver tags (`v*.*.*`). Skips on README or chart-only changes.
 - **`helm-publish.yml`**: Lints and releases the Helm chart via `chart-releaser` on pushes to `main`.
+
+### Helper Scripts
+
+Custom scripts live in `scripts/` and are copied into `/usr/local/bin/` during the Docker build (`COPY --chmod=755 scripts/ /usr/local/bin/`), making them available on `PATH` immediately. Add new scripts here without a file extension; they will be available by name inside the container.
+
+**Bash completion convention:** Every script must support a `--completion` flag that prints its own bash completion function to stdout. The Dockerfile iterates over all scripts after copying and pipes each script's `--completion` output into `/etc/bash_completion.d/<script-name>`, so completions are registered automatically when a shell starts. New scripts must follow this same pattern.
+
+Current scripts:
+- **`tls-check`** — connects to a host extracted from a URL and prints TLS certificate details. Flags: `-d/--dates`, `-s/--san`, `-u/--subject`, `-a/--all`, `-p/--port`. Defaults to all fields when no flag is given.
 
 ### Versioning
 
