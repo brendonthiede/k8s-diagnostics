@@ -68,7 +68,7 @@ ENV PATH="$PATH:/opt/mssql-tools18/bin"
 CMD ["/bin/bash","-l"]
 
 FROM root AS nonroot
-RUN useradd -m -s /bin/bash -u 10000 -U -G sudo --disabled-password diagnostics && \
+RUN useradd -m -s /bin/bash -u 10000 -U -G sudo diagnostics && \
     echo "diagnostics ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER diagnostics
