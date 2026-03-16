@@ -25,9 +25,7 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Lint Helm chart
-        run: |
-          cd charts/k8s-diagnostics
-          helm lint
+        run: helm lint charts/k8s-diagnostics
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
