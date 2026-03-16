@@ -2,16 +2,12 @@ FROM ubuntu:22.04 AS root
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
-    apt-get upgrade -y && \
     apt-get dist-upgrade -y && \
     apt-get -y install --fix-missing --no-install-recommends \
-    apt-transport-https \
     apt-utils \
     ca-certificates \
     curl \
     gnupg \
-    gnupg2 \
-    gpg \
     lsb-release \
     software-properties-common
 RUN update-ca-certificates
@@ -52,7 +48,7 @@ RUN apt-get update && \
     ngrep \
     nmap \
     openssl \
-    postgresql-client-13 \
+    postgresql-client-17 \
     redis-tools \
     scapy \
     socat \
@@ -72,7 +68,7 @@ ENV PATH="$PATH:/opt/mssql-tools18/bin"
 CMD ["/bin/bash","-l"]
 
 FROM root AS nonroot
-RUN useradd -m -s /bin/bash -u 10000 -U -G sudo -p $(openssl passwd -1 pass) diagnostics && \
+RUN useradd -m -s /bin/bash -u 10000 -U -G sudo --disabled-password diagnostics && \
     echo "diagnostics ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER diagnostics
