@@ -62,6 +62,18 @@ jobs:
 
       - name: Build and push Docker image
         id: build-and-push
+        continue-on-error: true
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      # One retry for transient failures from the third-party hosts the build downloads from.
+      # Keep `with` identical to the step above.
+      - name: Build and push Docker image (retry)
+        if: steps.build-and-push.outcome == 'failure'
         uses: docker/build-push-action@v6
         with:
           context: .
